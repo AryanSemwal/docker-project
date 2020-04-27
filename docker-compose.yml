@@ -1,0 +1,51 @@
+version: '3'
+services:
+  namenode:
+    image: swapnillinux/cloudera-hadoop-namenode  
+    volumes :
+      - namenode_storage:/hadoop/dfs/name
+    restart: always
+    ports:
+      - 8020:8020
+ 
+    
+    networks:
+      - hadoop-nw  
+
+  datanode1:
+    image: swapnillinux/cloudera-hadoop-datanode
+    volumes:
+      - datanode_storage:/hadoop/dfs/data
+    restart: always
+    depends_on: 
+      - namenode
+      - yarnmaster
+
+    networks:
+      - hadoop-nw    
+  datanode2:
+    image: swapnillinux/cloudera-hadoop-datanode
+    volumes:
+      - datanode_storage:/hadoop/dfs/data
+    restart: always
+    depends_on: 
+      - namenode
+      - yarnmaster
+
+    networks:
+      - hadoop-nw    
+  yarnmaster:
+    image: swapnillinux/cloudera-hadoop-yarnmaster
+    restart: always
+    ports:
+      - 8032:8032
+      - 8088:8088
+
+    networks:
+      - hadoop-nw
+
+volumes:
+  namenode_storage:
+  datanode_storage:
+networks:
+  hadoop-nw:
